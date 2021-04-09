@@ -29,7 +29,7 @@ type WeatherResponse struct {
 	} `json:"sys"`
 }
 
-func BuildWeatherResponse(body string) {
+func BuildWeatherResponse(body string) WeatherResponse {
 	var weatherResponse WeatherResponse
 	err := json.Unmarshal([]byte(body), &weatherResponse)
 
@@ -37,5 +37,5 @@ func BuildWeatherResponse(body string) {
 		fmt.Println(err)
 	}
 
-	fmt.Println(weatherResponse)
+	return weatherResponse
 }

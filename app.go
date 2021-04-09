@@ -8,9 +8,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-)
 
-import weather "go_outside/models"
+	weather "go_outside/models"
+)
 
 func getData(url string) string {
 	resp, err := http.Get(url)
@@ -52,8 +52,9 @@ func main() {
 
 	// fmt.Println(body)
 
-	// var weatherResponse []weather.WeatherResponse
+	var weatherResponse weather.WeatherResponse
+	weatherResponse = weather.BuildWeatherResponse(body)
 
-	weather.BuildWeatherResponse(body)
+	fmt.Println(weatherResponse)
 
 }
