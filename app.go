@@ -14,27 +14,6 @@ import (
 	models "go_outside/models"
 )
 
-func getData(url string) string {
-	resp, err := http.Get(url)
-	printErr(err)
-
-	body, err := ioutil.ReadAll(resp.Body)
-	printErr(err)
-
-
-	sb := string(body)
-
-	return sb
-}
-
-func loadConfig(key string) string {
-	err := godotenv.Load(".env")
-
-	printErr(err)
-
-	return os.Getenv(key)
-}
-
 func main() {
 	location := getLocation("http://ipinfo.io")
 	coords := strings.Split(location.Loc, ",")
@@ -50,6 +29,26 @@ func main() {
 	weatherResponse := models.BuildWeatherResponse(body)
 
 	printWeather(weatherResponse)
+}
+
+func getData(url string) string {
+	resp, err := http.Get(url)
+	printErr(err)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	printErr(err)
+
+	sb := string(body)
+
+	return sb
+}
+
+func loadConfig(key string) string {
+	err := godotenv.Load(".env")
+
+	printErr(err)
+
+	return os.Getenv(key)
 }
 
 func printWeather(weatherData models.WeatherResponse) {
