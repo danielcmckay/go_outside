@@ -5,6 +5,13 @@ import (
 	"fmt"
 )
 
+// Used for parsing location response
+type Location struct {
+	Loc      string `json:"loc"`
+	Timezone string `json:"timezone"`
+}
+
+// Build-out of JSON response from open weather api
 type WeatherResponse struct {
 	Weather []struct {
 		Id          int    `json:"id"`
@@ -31,6 +38,7 @@ type WeatherResponse struct {
 	Name string `json:"name"`
 }
 
+// Unmarshal JSON into struct, return
 func BuildWeatherResponse(body string) WeatherResponse {
 	var weatherResponse WeatherResponse
 	err := json.Unmarshal([]byte(body), &weatherResponse)
