@@ -1,11 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gookit/color"
 	"github.com/joho/godotenv"
@@ -15,14 +16,11 @@ import (
 
 func getData(url string) string {
 	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	printErr(err)
 
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	printErr(err)
+
 
 	sb := string(body)
 
@@ -32,24 +30,24 @@ func getData(url string) string {
 func loadConfig(key string) string {
 	err := godotenv.Load(".env")
 
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	printErr(err)
 
 	return os.Getenv(key)
 }
 
 func main() {
+	location := getLocation("http://ipinfo.io")
+	coords := strings.Split(location.Loc, ",")
+
 	key := loadConfig("API_KEY")
-	lat := "48.209785"
-	lng := "-114.308106"
+	lat := coords[0]
+	lng := coords[1]
 
 	var url string = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + lat + "&lon=" + lng + "&appid=" + key
 
 	var body = getData(url)
 
-	var weatherResponse models.WeatherResponse
-	weatherResponse = models.BuildWeatherResponse(body)
+	weatherResponse := models.BuildWeatherResponse(body)
 
 	printWeather(weatherResponse)
 }
@@ -66,9 +64,18 @@ func printWeather(weatherData models.WeatherResponse) {
 	fmt.Println()
 }
 
+func getLocation(url string) models.Location {
+	var location models.Location
+	err := json.Unmarshal([]byte(getData(url)), &location)
+	printErr(err)
+
+	return location
+}
+
+// this is so gross
 func processCondition(id int) {
 	if id > 800 {
-			models.GetClouds()
+		models.GetClouds()
 	} else if id == 800 {
 		models.GetClear()
 	} else if id >= 700 && id <= 741 {
@@ -85,5 +92,11 @@ func processCondition(id int) {
 		models.GetDrizzle()
 	} else {
 		models.GetThunderstorm()
+	}
+}
+
+func printErr(err error) {
+	if err != nil {
+		fmt.Errorf(err.Error())
 	}
 }
