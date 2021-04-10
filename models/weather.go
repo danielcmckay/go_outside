@@ -7,7 +7,7 @@ import (
 
 type WeatherResponse struct {
 	Weather []struct {
-		Id          int `json:"id"`
+		Id          int    `json:"id"`
 		Main        string `json:"main"`
 		Description string `json:"description"`
 		Icon        string `json:"icon"`
@@ -27,6 +27,8 @@ type WeatherResponse struct {
 		Sunrise int `json:"sunrise"`
 		Sunset  int `json:"sunset"`
 	} `json:"sys"`
+
+	Name string `json:"name"`
 }
 
 func BuildWeatherResponse(body string) WeatherResponse {

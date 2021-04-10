@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gookit/color"
 	"github.com/joho/godotenv"
 
-	weather "go_outside/models"
+	models "go_outside/models"
 )
 
 func getData(url string) string {
@@ -43,18 +44,25 @@ func main() {
 	lat := "48.209785"
 	lng := "-114.308106"
 
-	fmt.Println(key)
-
-	var url string = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&appid=" + key
-	// var url string = "https://api.tomorrow.io/v4/timelines?location=" + lat + "," + lng + "&fields=temperature&timesteps=1h&units=imperial&apikey=" + key;
+	var url string = "https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=" + lat + "&lon=" + lng + "&appid=" + key
 
 	var body = getData(url)
 
-	// fmt.Println(body)
+	var weatherResponse models.WeatherResponse
+	weatherResponse = models.BuildWeatherResponse(body)
 
-	var weatherResponse weather.WeatherResponse
-	weatherResponse = weather.BuildWeatherResponse(body)
+	printWeather(weatherResponse)
+}
 
-	fmt.Println(weatherResponse)
+func printWeather(weatherData models.WeatherResponse) {
+	models.GetClouds()
+	fmt.Println()
+	fmt.Printf("\nCurrent weather in %s: \n", weatherData.Name)
+	fmt.Println()
+
+	color.Cyan.Printf("%.1f degrees F,", weatherData.Main.Temp)
+	color.FgLightRed.Printf(" feels like %.1f, ", weatherData.Main.Feels_like)
+	color.Magenta.Printf("%s \n", weatherData.Weather[0].Main)
+	fmt.Println()
 
 }
